@@ -6,11 +6,11 @@ from torch.utils.data import Dataset, DataLoader
 
 class LearnedIndexDataset(Dataset):
     def __init__(self, data_fp):
-        data = get_data(data_fp)
-        mean_ = np.mean(data)
-        std_ = np.std(data)
-        self.data = np.asarray((data - mean_)/std_, dtype=np.float32).reshape((len(data), 1))
-        self.label = np.arange(0, len(self.data), dtype=np.float32).reshape((len(data), 1))
+        data = get_data(data_fp)[:100000]
+        label = np.arange(0, len(data), dtype=np.float32)
+
+        self.data = np.asarray((data - np.mean(data))/np.std(data), dtype=np.float32).reshape((len(data), 1))
+        self.label = np.asarray((label - np.mean(label))/np.std(label), dtype=np.float32).reshape((len(label), 1))
 
     def __len__(self):
         return len(self.data)
