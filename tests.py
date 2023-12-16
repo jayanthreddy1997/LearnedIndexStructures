@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def main():
+def test1():
     data_fp = f'/Users/reddyj/Desktop/workspace/nyu/courses/idls/project/SOSD/data/normal_200M_uint32'
     with open(data_fp, 'rb') as f:
         packed_data = f.read()
@@ -14,4 +14,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    test1()

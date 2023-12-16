@@ -2,9 +2,11 @@ import time
 import torch
 import torch.nn as nn
 import pandas as pd
+import os
+import yaml
 
-from learned_index.model import NeuralNetwork
-from learned_index.dataloader import get_dataloader
+from model import NeuralNetwork
+from dataloader import get_dataloader
 
 
 N_LAYERS = 2
@@ -12,7 +14,7 @@ N_UNITS = 100
 LEARNING_RATE = 0.01
 MOMENTUM = 0.9
 WEIGHT_DECAY = 0.0001
-N_EPOCHS = 1
+N_EPOCHS = 100
 BATCH_SIZE = 16384
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -76,8 +78,7 @@ def run_simulation(data_path, save_stats=False, stats_fp=None):
 
 
 if __name__ == '__main__':
-    run_simulation(
-        data_path='/Users/reddyj/Desktop/workspace/nyu/courses/idls/project/SOSD/data/normal_200M_uint32',
-        save_stats=True,
-        stats_fp='/Users/reddyj/Desktop/workspace/nyu/courses/idls/project/LearnedIndexStructures/learned_index/output/sim1.csv'
-    )
+    config_file = 'conf/hpc_config.yml' if 'hpc.nyu.edu' in os.uname().nodename else 'conf/local_config.yml'
+    with open(config_file, 'r') as f:
+        config = yaml.safe_load(f)
+    run_simulation(**config)

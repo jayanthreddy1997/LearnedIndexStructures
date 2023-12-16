@@ -1,0 +1,3 @@
+data_path: /scratch/nr2686/datasets/normal_200M_uint32'
+save_stats: True
+stats_fp: 'output/sim1.csv'
