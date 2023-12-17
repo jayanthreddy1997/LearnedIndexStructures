@@ -74,7 +74,7 @@ def run_simulation(config):
         train_loss, train_time = train(dataloader, model, loss_fn, optimizer)
         if train_loss < best_loss:
             best_loss = train_loss
-            torch.save(model, weights_fp)
+            torch.save(model.state_dict(), weights_fp)
         print(f"Epoch {epoch_num}/{N_EPOCHS} | Train loss: {train_loss} | Train time: {train_time}s")
         stats.append([epoch_num, N_EPOCHS, time.time() - start_time, train_loss])
 
