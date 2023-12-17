@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 
 class NeuralNetwork(nn.Module):
-    def __init__(self, n_layers=10, n_units=2):
+    def __init__(self, n_layers=2, n_units=100):
         super().__init__()
         stack = OrderedDict()
         stack["h0"] = nn.Linear(1, n_units)
