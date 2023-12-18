@@ -4,8 +4,8 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --time=00:60:00
 #SBATCH --mem=16GB
-#SBATCH --job-name=sim1
-#SBATCH --output=output/sim1.out
+#SBATCH --job-name=inference_tests
+#SBATCH --output=output/tests.out
 #SBATCH --gres=gpu:v100:1
 
 singularity exec \
@@ -13,4 +13,4 @@ singularity exec \
             /scratch/work/public/singularity/ubuntu-20.04.1.sif \
             /bin/bash -c "cd /home/nr2686/workspace/idls/LearnedIndexStructures;
             source /ext3/env.sh;
-            python main.py"
+            python inference_time_tests.py"

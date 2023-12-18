@@ -2,20 +2,12 @@ import time
 import torch
 import torch.nn as nn
 import pandas as pd
-import os
-import yaml
+from utils import get_config
 
 from model import NeuralNetwork
 from dataloader import get_dataloader
 
 
-N_LAYERS = 2
-N_UNITS = 128
-LEARNING_RATE = 0.01
-MOMENTUM = 0.9
-WEIGHT_DECAY = 0.0001
-N_EPOCHS = 100
-BATCH_SIZE = 16384
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
@@ -51,50 +43,43 @@ def test(dataloader, model, loss_fn):
 
 
 def run_simulation(config):
-    data_path = config['data_path']
-    save_stats = config['save_stats']
-    stats_fp = config['stats_fp']
-    weights_fp = config['weights_fp']
-    model_scripted_fp = config['model_scripted_fp']
 
     torch.manual_seed(0)
     print("Creating Neural Network")
-    model = NeuralNetwork(n_layers=N_LAYERS, n_units=N_UNITS).to(device)
+    model = NeuralNetwork(n_layers=config['n_layers'], n_units=config['n_units']).to(device)
     print("Creating dataloaders")
-    dataloader = get_dataloader(data_path, batch_size=BATCH_SIZE)
+    dataloader = get_dataloader(config['data_path'], batch_size=config['batch_size'])
 
-    optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
+    # optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM, weight_decay=WEIGHT_DECAY)
+    optimizer = torch.optim.Adam(model.parameters(), lr=config['learning_rate'])
     loss_fn = nn.MSELoss()
-
+    n_epochs = config['n_epochs']
     stats = []
     start_time = time.time()
     print(f"Starting simulation")
     best_loss = float('inf')
-    for epoch_num in range(1, N_EPOCHS + 1):
+    for epoch_num in range(1, n_epochs + 1):
         train_loss, train_time = train(dataloader, model, loss_fn, optimizer)
         if train_loss < best_loss:
             best_loss = train_loss
-            torch.save(model.state_dict(), weights_fp)
-        print(f"Epoch {epoch_num}/{N_EPOCHS} | Train loss: {train_loss} | Train time: {train_time}s")
-        stats.append([epoch_num, N_EPOCHS, time.time() - start_time, train_loss])
+            torch.save(model.state_dict(), config['weights_fp'])
+        print(f"Epoch {epoch_num}/{n_epochs} | Train loss: {train_loss} | Train time: {train_time}s")
+        stats.append([epoch_num, n_epochs, time.time() - start_time, train_loss])
 
-    model.load_state_dict(torch.load(weights_fp))
+    model.load_state_dict(torch.load(config['weights_fp']))
 
     model_scripted = torch.jit.script(model)  # Export to TorchScript
-    model_scripted.save(model_scripted_fp)  # Save
+    model_scripted.save(config['model_scripted_fp'])  # Save
 
     model.eval()
     test_loss = test(dataloader, model, loss_fn)
     print(f"Test loss: {test_loss}")
-    stats.append(["final", N_EPOCHS, time.time() - start_time, test_loss])
+    stats.append(["final", n_epochs, time.time() - start_time, test_loss])
     print(f"Simulation completed in {time.time() - start_time}s")
     stats_df = pd.DataFrame(stats, columns=['EpochNum', 'TotalEpochs', 'TimeElapsed', 'TrainLoss'])
-    if save_stats:
-        stats_df.to_csv(stats_fp)
+    if config['save_stats']:
+        stats_df.to_csv(config['stats_fp'])
 
 
 if __name__ == '__main__':
-    config_file = 'conf/hpc_config.yml' if 'hpc.nyu.edu' in os.uname().nodename else 'conf/local_config.yml'
-    with open(config_file, 'r') as f:
-        _config = yaml.safe_load(f)
-    run_simulation(_config)
+    run_simulation(get_config())
