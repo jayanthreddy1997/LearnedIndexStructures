@@ -1,0 +1,11 @@
+data_path: /Users/reddyj/Desktop/workspace/nyu/courses/idls/project/SOSD/data/normal_200M_uint32
+save_stats: True
+stats_fp: output/sim1.csv
+weights_fp: output/sim1_weights.pt
+model_scripted_fp: output/sim1_model_scripted.pt
+
+batch_size: 16384
+n_layers: 2
+n_units: 128
+learning_rate: 0.01
+n_epochs: 100

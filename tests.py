@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def main():
+def test1():
     data_fp = f'/Users/reddyj/Desktop/workspace/nyu/courses/idls/project/SOSD/data/normal_200M_uint32'
     with open(data_fp, 'rb') as f:
         packed_data = f.read()
@@ -12,6 +12,16 @@ def main():
     plt.hist(data[200000000-1000000:], bins=100)
     plt.show()
 
+def test2():
+    import torch
 
+    torch.set_default_device("cuda:0")
+    @torch.compile
+    def test_fn(x):
+      return torch.sin(x)
+
+    a = torch.zeros(100)
+    print(test_fn(a))
+    
 if __name__ == '__main__':
-    main()
+    test2()

@@ -1,0 +1,11 @@
+data_path: /scratch/nr2686/datasets/uniform_sparse_200M_uint32
+save_stats: True
+stats_fp: output_uspr/sim1.csv
+weights_fp: output_uspr/sim1_weights.pt
+model_scripted_fp: output_uspr/sim1_model_scripted.pt
+
+batch_size: 16384
+n_layers: 2
+n_units: 128
+learning_rate: 0.01
+n_epochs: 100

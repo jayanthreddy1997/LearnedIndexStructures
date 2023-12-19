@@ -6,11 +6,11 @@
 #SBATCH --mem=16GB
 #SBATCH --job-name=sim1
 #SBATCH --output=output/sim1.out
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:v100:1
 
 singularity exec \
             --nv --overlay /scratch/nr2686/idls_env/overlay-15GB-500K.ext3 \
             /scratch/work/public/singularity/ubuntu-20.04.1.sif \
-            /bin/bash -c "cd /home/nr2686/workspace/idls/LearnedIndexStructures/learned_index;
+            /bin/bash -c "cd /home/nr2686/workspace/idls/LearnedIndexStructures;
             source /ext3/env.sh;
             python main.py"
