@@ -12,6 +12,16 @@ def test1():
     plt.hist(data[200000000-1000000:], bins=100)
     plt.show()
 
+def test2():
+    import torch
 
+    torch.set_default_device("cuda:0")
+    @torch.compile
+    def test_fn(x):
+      return torch.sin(x)
+
+    a = torch.zeros(100)
+    print(test_fn(a))
+    
 if __name__ == '__main__':
-    test1()
+    test2()
