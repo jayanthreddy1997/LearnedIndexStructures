@@ -1,3 +1,4 @@
+import os
 import time
 import torch
 import torch.nn as nn
@@ -82,4 +83,8 @@ def run_simulation(config):
 
 
 if __name__ == '__main__':
-    run_simulation(get_config())
+    for dataset in ['norm', 'logn', 'uspr']:
+        if os.path.exists(f'output_{dataset}'):
+            os.rmdir(f'output_{dataset}')
+        os.mkdir(f'output_{dataset}')
+        run_simulation(get_config(f'conf/hpc_config_{dataset}.yml'))
