@@ -3,7 +3,7 @@ import torch._dynamo
 from model import NeuralNetwork
 from utils import get_config
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-# device = 'cpu'
+
 
 class LearnedIndex:
     def __init__(self, model_fp):
