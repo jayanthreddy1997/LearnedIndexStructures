@@ -7,6 +7,9 @@ from utils import get_config
 from learned_index import LearnedIndex
 
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+
 def test_data():
     data_fp = f'/Users/reddyj/Desktop/workspace/nyu/courses/idls/project/SOSD/data/normal_200M_uint32'
     with open(data_fp, 'rb') as f:
@@ -41,6 +44,8 @@ def test_model_perf():
         learned_index = LearnedIndex(config['weights_fp'])
 
         for inputs, targets in dataloader:
+            inputs = inputs.to(device)
+            targets = targets.to(device)
             predicted_values, _ = learned_index.get_predictions(inputs)
 
             mean_targets = torch.mean(targets)
@@ -64,12 +69,12 @@ def test_memory_usage():
         learned_index = LearnedIndex(config['weights_fp'])
 
         keys, locations = next(iter(dataloader))
-        device = torch.device('cuda')
+        keys = keys.to(device)
         for i in range(5):  # warmup
             predictions, time_taken = learned_index.get_predictions(keys)
-        torch.cuda.reset_peak_memory_stats(device=device)
+        torch.cuda.reset_peak_memory_stats(device=torch.device('cuda'))
         temp1, temp2 = learned_index.get_predictions(keys)
-        print(f"Dataset: {dataset} | Peak memory consumption: {torch.cuda.max_memory_allocated(device=device)}")
+        print(f"Dataset: {dataset} | Peak memory consumption: {torch.cuda.max_memory_allocated(device=torch.device('cuda'))}")
 
 
 if __name__ == '__main__':
